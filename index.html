@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEW-MAP LIVE</title>
+
+    <script src="https://survey123.arcgis.com/api/jsapi"></script>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.20/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.20/"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="main.js" type="module"></script>
+
+</head>
+
+<body>
+    <div class="header">
+
+        <div class="text-holder">
+            <h2>STEW-MAP : Bridger-Teton National Forest</h2>
+            <p class="intro-text page">
+                Bridger Teton National Forest engaged in a Forest Service-led partnership mapping project in 2021, adding groups that help take care of the environment, or stewards, to a digital map. There is still an opportunity to add your organization or other groups
+                that you know of or collaborate with to the map of stewardship groups by filling out this Stewardship Mapping and Assessment (STEW-MAP) short form. <u>Your participation in STEW-MAP is completely voluntary</u>. At a later
+                stage, groups added to this map may be contacted for the full STEW-MAP survey, as part of an update to the partnership mapping project.
+            </p><br>
+            <p class="intro-text page" , style="font-size: 11px; color:#666">
+                STEW-MAP is collecting initial information about civic groups and organizations that do environmental stewardship work in your region. These organizations may not primarily focus on the environment, but instead be focused on housing, youth, or social
+                services; however, they still engage in caring for the environment in some fashion. This form is to collect basic information on groups' basic contact information, including where each group office or meeting space is located. By participating
+                in STEW-MAP, you can help potential volunteers, public agencies, funders, and other stewards find your group and learn about what it does. You will also be able to learn about other groups doing stewardship work in your region.
+            </p>
+        </div>
+    </div>
+    <div class="two-column">
+        <div class="left-panel">
+            <div class="button" id="add-group">
+                <span class="content">Click Here to Suggest a Group</span>
+            </div>
+
+            <div id="formDiv" style="height:100px;"></div>
+            <div id="formDiv-edit" style="height:100px;"></div>
+        </div>
+
+        <div class="right-panel">
+            <div id="viewDiv"></div>
+        </div>
+
+        <div class="info-panel">
+            <div class="def">
+                <p class="note">Search for a Group</p>
+                <input type="text" id='group-search' style="width:200px">
+            </div>
+            <div id="group-list"></div>
+        </div>
+    </div>
+</body>
+
+</html>
