@@ -13,7 +13,7 @@
 
     <link rel="stylesheet" href="style.css">
     <script src="main.js" type="module"></script>
-    <script src="config.js" type="module"></script>
+    <!--<script src="config.js" type="module"></script>-->
 
 </head>
 
@@ -21,23 +21,19 @@
     <div class="header">
 
         <div class="text-holder">
-            <h2>STEW-MAP : Bridger-Teton National Forest</h2>
+            <h2>STEW-MAP Live - New York City</h2>
             <p class="intro-text page">
-                Bridger Teton National Forest engaged in a Forest Service-led partnership mapping project in 2021, adding groups that help take care of the environment, or stewards, to a digital map. There is still an opportunity to add your organization or other groups
-                that you know of or collaborate with to the map of stewardship groups by filling out this Stewardship Mapping and Assessment (STEW-MAP) short form. <u>Your participation in STEW-MAP is completely voluntary</u>. At a later
-                stage, groups added to this map may be contacted for the full STEW-MAP survey, as part of an update to the partnership mapping project.
-            </p><br>
-            <p class="intro-text page" , style="font-size: 11px; color:#666">
-                STEW-MAP is collecting initial information about civic groups and organizations that do environmental stewardship work in your region. These organizations may not primarily focus on the environment, but instead be focused on housing, youth, or social
-                services; however, they still engage in caring for the environment in some fashion. This form is to collect basic information on groups' basic contact information, including where each group office or meeting space is located. By participating
-                in STEW-MAP, you can help potential volunteers, public agencies, funders, and other stewards find your group and learn about what it does. You will also be able to learn about other groups doing stewardship work in your region.
+                The Stewardship Mapping and Assessment (STEW-MAP) project visualizes groups that help take care of the environment, or stewards, on a digital map. Our last survey in NYC closed in 2018, resulting in a <a href="https://usfs.maps.arcgis.com/apps/webappviewer/index.html?id=4d8be0bc04b649b383aa66b7bce682c0"
+                    target="_blank">mapped database</a>. Help us keep groups' contact information current - and include new groups or groups that haven't yet taken the survey. Below, you can <b>find and edit already mapped groups</b>, by looking at the list
+                on the right - or <b>add a new group</b> by clicking "Click here to add a group to the map".
+                <u>Your participation in STEW-MAP is completely voluntary</u>. At a later stage, groups added to this map may be contacted for the full STEW-MAP survey, as part of an update.
             </p>
         </div>
     </div>
     <div class="two-column">
         <div class="left-panel">
             <div class="button" id="add-group">
-                <span class="content">Click Here to Suggest a Group</span>
+                <span class="content">Click here to add a group to the map</span>
             </div>
 
             <div id="formDiv" style="height:100px;"></div>
@@ -49,11 +45,13 @@
         </div>
 
         <div class="info-panel">
-            <div class="def">
-                <p class="note">Search for a Group</p>
-                <input type="text" id='group-search' style="width:200px">
+            <div class="holder">
+                <div class="def">
+                    <p class="note">Search for a Group</p>
+                    <input type="text" id='group-search' style="width:200px">
+                </div>
+                <div id="group-list"></div>
             </div>
-            <div id="group-list"></div>
         </div>
     </div>
 </body>

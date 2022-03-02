@@ -54,12 +54,14 @@ p {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
+    height: 100%;
+    max-height: 100%;
 }
 
 .left-panel {
     padding-top: 20px;
     height: 100%;
-    width: 600px;
+    width: 400px;
     overflow-y: hidden;
 }
 
@@ -78,9 +80,8 @@ p {
 
 #group-list {
     overflow-y: auto;
-    flex-grow: 1;
-    max-height: 550px;
     padding: 0px 10px 0px 0px;
+    max-height: calc(100% - 270px);
 }
 
 #formDiv {
@@ -95,7 +96,7 @@ p {
 }
 
 .header {
-    padding: 45px 45px 30px;
+    padding: 30px 45px 30px;
     display: flex;
     flex-direction: row;
     border-bottom: 1px solid black;
@@ -152,8 +153,7 @@ p {
 
 .def {
     width: 80%;
-    margin: 15px auto;
-    padding-bottom: 15px;
+    padding: 15px 15px 20px;
     border-bottom: 2px solid #0f4256;
 }
 
@@ -175,12 +175,17 @@ img {
     margin-left: 20px;
 }
 
+.holder {
+    height: 100%;
+}
+
 iframe {
     border: 0px none;
 }
 
 h2 {
-    margin-top: 10px !important;
+    margin-top: 0px !important;
+    margin-bottom: 5px;
 }
 
 .button {
