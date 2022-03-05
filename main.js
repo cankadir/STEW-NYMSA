@@ -71,7 +71,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     //Layer Styling is here
     const renderer_Rule = {
         type: "simple",
-        label: "Dates",
+        label: "Groups",
         symbol: {
             type: "simple-marker",
             size: 4,
@@ -81,7 +81,16 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                 color: "white"
             }
         },
+
         visualVariables: [{
+                type: "color",
+                field: "Stew_Gr",
+                stops: [
+                    { value: 0, color: colors[0] },
+                    { value: 1, color: "#354F52" },
+                ]
+            }
+            /*{
                 type: "color",
                 valueExpression: "DateDiff( Now() , $feature['EditDate'], 'days')",
                 valueExpressionTitle: "Days it took to close incident",
@@ -100,7 +109,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                     { value: 1, size: 4, label: "now" },
                     { value: 0, size: circle_size, label: "new" },
                 ]
-            }
+            }*/
         ]
     }
 
@@ -128,9 +137,10 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     });
 
     /*/ ------------ Legend -----------------
-    let legend = new Legend({view: view});
+    let legend = new Legend({ view: view });
     view.ui.add(legend, "bottom-right");
     */
+
 
     // -------- INTERACTIONS -----------------
     // When a group is clicked on the map, filter the side bar to that group

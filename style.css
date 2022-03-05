@@ -9,7 +9,8 @@ body {
     overflow-y: hidden;
     display: flex;
     flex-direction: column;
-    font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+    font-style: normal !important;
 }
 
 .group-container {
@@ -109,7 +110,6 @@ p {
 .hover-up {
     font-size: 0.8rem;
     color: #777;
-    font-style: italic;
 }
 
 #button {
