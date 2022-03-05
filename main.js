@@ -91,27 +91,28 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                 ]
             }
             /*,
-            {
-                type: "color",
-                valueExpression: "DateDiff( Now() , $feature['EditDate'], 'days')",
-                valueExpressionTitle: "Days it took to close incident",
-                stops: [
-                    { value: 23, color: colors[0], label: "23" },
-                    { value: 0.1, color: colors[1], label: "now" },
-                    { value: 0, color: colors[2], label: "new" },
-                ]
-            }
-            ,
-                       {
-                           type: "size",
-                           valueExpression: "DateDiff( Now() , $feature['EditDate'], 'days')",
-                           valueExpressionTitle: "Days it took to close incident",
-                           stops: [
-                               { value: 23, size: 4, label: "23" },
-                               { value: 1, size: 4, label: "now" },
-                               { value: 0, size: circle_size, label: "new" },
-                           ]
-                       }*/
+                        {
+                            type: "color",
+                            valueExpression: "DateDiff( Now() , $feature['EditDate'], 'minutes')",
+                            valueExpressionTitle: "Days it took to close incident",
+                            stops: [
+                                { value: 100, color: colors[0], label: "15" },
+                                { value: 10, color: colors[1], label: "now" },
+                                { value: 0, color: colors[2], label: "new" },
+                            ]
+                        }
+                        
+                                    ,
+                                               {
+                                                   type: "size",
+                                                   valueExpression: "DateDiff( Now() , $feature['EditDate'], 'days')",
+                                                   valueExpressionTitle: "Days it took to close incident",
+                                                   stops: [
+                                                       { value: 23, size: 4, label: "23" },
+                                                       { value: 1, size: 4, label: "now" },
+                                                       { value: 0, size: circle_size, label: "new" },
+                                                   ]
+            }*/
         ]
     }
 
@@ -137,11 +138,10 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
         center: [-73.957, 40.733]
     });
 
-    // ------------ Legend -----------------
+    /*/ ------------ Legend -----------------
     let legend = new Legend({ view: view });
     view.ui.add(legend, "bottom-right");
-
-
+    */
 
     // -------- INTERACTIONS -----------------
     // When a group is clicked on the map, filter the side bar to that group
