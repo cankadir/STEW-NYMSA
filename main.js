@@ -31,7 +31,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
             clientId: clientId, // Oath only is allowed in local host 50905 for now.
             container: "formDiv",
             itemId: itemId,
-            autoRefresh: 3,
+            //autoRefresh: 3,
             //isDisabedSubmittoFeatureService: false,
             hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
             onFormLoaded: (data) => { // Place point to current location
@@ -56,8 +56,11 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
             onFormSubmitted: (data) => { // Show me the submitted data
                 console.log("New Group Submitted")
                 console.log(data);
-                document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:0px");
                 layer.refresh();
+
+                let tt = document.getElementsByClassName('left-panel');
+                tt = [...tt][0];
+                tt.setAttribute("style", "min-height:0px");
             }
         })
     });
@@ -198,84 +201,83 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
 
         //Ierate over each element to generate the list
         results.features.forEach(function(feat) {
-                // ----- Insert Name and Address
-                var htmlString = `<div class="group-text"><p style="font-size:10pt;" class="group-content" id="group-title">${titleCase(feat.attributes.OrgName)}</p><hr id="group-sep"><p style="font-size:8pt" class="group-content">${titleCase(feat.attributes.OrgStreet1)},${feat.attributes.OrgCity}/${feat.attributes.OrgState}</p></div>`;
-                let div = document.createElement('div');
-                div.setAttribute("id", `${feat.attributes.PopID}`);
-                div.setAttribute("class", "group-container");
-                div.innerHTML = htmlString;
-                document.getElementById("group-list").appendChild(div);
+            // ----- Insert Name and Address
+            var htmlString = `<div class="group-text"><p style="font-size:10pt;" class="group-content" id="group-title">${titleCase(feat.attributes.OrgName)}</p><hr id="group-sep"><p style="font-size:8pt" class="group-content">${titleCase(feat.attributes.OrgStreet1)},${feat.attributes.OrgCity}/${feat.attributes.OrgState}</p></div>`;
+            let div = document.createElement('div');
+            div.setAttribute("id", `${feat.attributes.PopID}`);
+            div.setAttribute("class", "group-container");
+            div.innerHTML = htmlString;
+            document.getElementById("group-list").appendChild(div);
 
-                //Go to clicked Group on Click
-                div.addEventListener('click', function change(event) {
-                    // Clicked group gets a border
-                    let grs = document.getElementsByClassName("group-container")
-                    Array.from(grs).forEach(function(gr) {
-                        gr.setAttribute("class", "group-container");
+            //Go to clicked Group on Click
+            div.addEventListener('click', function change(event) {
+                // Clicked group gets a border
+                let grs = document.getElementsByClassName("group-container")
+                Array.from(grs).forEach(function(gr) {
+                    gr.setAttribute("class", "group-container");
+                })
+
+                div.setAttribute("class", "group-container clicked");
+                // Goto the group on the map
+                view.goTo({
+                    target: feat,
+                    zoom: 15,
+                    duration: 2500
+                });
+            });
+
+
+            // ----- Button in each group element
+            // - Rigth panel actions
+            let button = document.createElement('div');
+            button.setAttribute("id", `${feat.attributes.OrgName}`);
+            button.setAttribute("class", "edit-button");
+            button.innerHTML = `<p style="pointer-events:none;">Edit This Group</p>`;
+
+            // ----- On click
+            button.addEventListener("click", function change(event) {
+                //console.log(event.target.attributes.id.value);
+                // Query group by to get GlobalID
+                layer.queryFeatures({
+                    where: `OrgName = '${event.target.attributes.id.value}'`,
+                    outFields: ['*']
+                }).then(function(results) {
+                    //let web_link = `https://survey123.arcgis.com/share/${itemId}?mode=edit&objectId=${results.features[0].attributes.OBJECTID}`
+                    //console.log(web_link);
+
+                    //--------------------------- Insert Webform to formDiv-edit in Edit Mode
+                    //Div must have height to insert form in to it. 
+                    // Missing Object ID
+                    document.getElementById("formDiv-edit").setAttribute("style", "height:100%");
+                    document.getElementById("formDiv").setAttribute("style", "height:1px");
+                    document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
+
+                    var webform_edit = new Survey123WebForm({
+                        clientId: clientId,
+                        container: "formDiv-edit",
+                        itemId: itemId,
+                        width: 250,
+                        //autoRefresh: 3,
+                        hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
+                        onFormSubmitted: (data) => {
+                            console.log('Form submitted: ', data);
+                            layer.refresh();
+                            let tt = document.getElementsByClassName('left-panel');
+                            tt = [...tt][0];
+                            tt.setAttribute("style", "min-height:0px");
+                        }
+                    });
+
+                    webform_edit.setMode({
+                        mode: 'edit',
+                        globalId: `${results.features[0].attributes.GlobalID}`,
+                        objectId: `${results.features[0].attributes.OBJECTID}`
                     })
-
-                    div.setAttribute("class", "group-container clicked");
-                    // Goto the group on the map
-                    view.goTo({
-                        target: feat,
-                        zoom: 15,
-                        duration: 2500
-                    });
                 });
-
-
-                // ----- Button in each group element
-                // - Rigth panel actions
-                let button = document.createElement('div');
-                button.setAttribute("id", `${feat.attributes.OrgName}`);
-                button.setAttribute("class", "edit-button");
-                button.innerHTML = `<p style="pointer-events:none;">Edit This Group</p>`;
-
-                // ----- On click
-                button.addEventListener("click", function change(event) {
-                    //console.log(event.target.attributes.id.value);
-                    // Query group by to get GlobalID
-                    layer.queryFeatures({
-                        where: `OrgName = '${event.target.attributes.id.value}'`,
-                        outFields: ['*']
-                    }).then(function(results) {
-                        //console.log(results.features[0].attributes);
-                        //objectId={objectid}
-                        //let web_link = `https://survey123.arcgis.com/share/${itemId}?mode=edit&objectId=${results.features[0].attributes.OBJECTID}`
-                        //console.log(web_link);
-
-                        //--------------------------- Insert Webform to formDiv-edit in Edit Mode
-                        //Div must have height to insert form in to it. 
-                        // Missing Object ID
-                        document.getElementById("formDiv-edit").setAttribute("style", "height:100%");
-                        document.getElementById("formDiv").setAttribute("style", "height:1px");
-                        document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
-
-                        var webform_edit = new Survey123WebForm({
-                            clientId: clientId,
-                            container: "formDiv-edit",
-                            itemId: itemId,
-                            width: 250,
-                            autoRefresh: 3,
-                            hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
-                            onFormSubmitted: (data) => {
-                                console.log('Form submitted: ', data);
-                                document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:0px");
-                                layer.refresh();
-                            }
-                        });
-
-                        webform_edit.setMode({
-                            mode: 'edit',
-                            globalId: `${results.features[0].attributes.GlobalID}`,
-                            objectId: `${results.features[0].attributes.OBJECTID}`
-                        })
-                    });
-                });
-                // On Click Finishes Here
-                div.appendChild(button); // Add edit button to the end of div
-            })
-            //console.log(results.features[0].attributes)
+            });
+            // On Click Finishes Here
+            div.appendChild(button); // Add edit button to the end of div
+        })
     }
 
     // Queries for all the features in the service to fill the right panel for the first time. 
