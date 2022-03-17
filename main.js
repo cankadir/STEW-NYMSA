@@ -20,11 +20,12 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     // Add a Group
     const add_button = document.getElementById("add-group");
     add_button.addEventListener("click", () => {
-        //console.log("Initiate Survey -> Add Group")
 
         //This is the Survey123 -- Add
         document.getElementById("formDiv").setAttribute("style", "height:100%");
         document.getElementById("formDiv-edit").setAttribute("style", "height:1px");
+
+        document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
 
         var webform = new Survey123WebForm({
             clientId: clientId, // Oath only is allowed in local host 50905 for now.
@@ -54,6 +55,8 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
             },
             onFormSubmitted: (data) => { // Show me the submitted data
                 console.log("New Group Submitted")
+                console.log(data);
+                document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:0px");
                 layer.refresh();
             }
         })
@@ -63,37 +66,11 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     // -------- SURVEY RESPONSES ----------
     // Pop up Template
     var template_groups = {
-        // autocasts as new PopupTemplate()
-        title: " Selected Group",
-        content: "<b>{OrgName}</b> <br> {OrgStreet1}, {OrgCity}/ {OrgState}, {OrgZip} <br> {PrimFocus}"
+        title: "",
+        content: "<p style='font-weight:bold;margin-bottom:10px!important'>{OrgName}</p> <p>{OrgStreet1}, {OrgCity}/ {OrgState}, {OrgZip}</p> <p> <b>Org. Focus:</b> {PrimFocus}</p>"
     };
 
-    //Layer Styling is here
-    /*
-    const renderer_Rule = {
-        type: "simple",
-        label: "Groups",
-        symbol: {
-            type: "simple-marker",
-            size: 4,
-            color: colors[0],
-            outline: { // autocasts as new SimpleLineSymbol()
-                width: 0.5,
-                color: "white"
-            }
-        },
-
-        visualVariables: [{
-            type: "color",
-            field: "Stew_Gr",
-            stops: [
-                { value: 0, color: colors[0] },
-                { value: -1, color: "#354F52" },
-            ]
-        }]
-    }
-    */
-
+    // Render Styline
     const markercolor = '#32539A';
     const renderer_Rule = {
             type: "unique-value",
@@ -272,25 +249,27 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                         // Missing Object ID
                         document.getElementById("formDiv-edit").setAttribute("style", "height:100%");
                         document.getElementById("formDiv").setAttribute("style", "height:1px");
+                        document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
 
                         var webform_edit = new Survey123WebForm({
-                            clientId: clientId, // Oath only is allowed in local host 50905 for now.
+                            clientId: clientId,
                             container: "formDiv-edit",
                             itemId: itemId,
                             width: 250,
                             autoRefresh: 3,
                             hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
                             onFormSubmitted: (data) => {
-                                //When form is submitted, refresh the feature layer. 
-                                console.log("Submitted!")
+                                console.log('Form submitted: ', data);
+                                document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:0px");
                                 layer.refresh();
                             }
                         });
+
                         webform_edit.setMode({
                             mode: 'edit',
                             globalId: `${results.features[0].attributes.GlobalID}`,
                             objectId: `${results.features[0].attributes.OBJECTID}`
-                        });
+                        })
                     });
                 });
                 // On Click Finishes Here
