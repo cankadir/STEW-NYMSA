@@ -13,14 +13,14 @@ var fl = config.fl_url;
 const colors = ["#A8A8A9", "#A8A8A9", "#AD3C0E"]; // Marker Colors, time based rendering
 const circle_size = 6; // Markersize
 
-require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/FeatureLayer", "esri/widgets/Legend"], (esriConfig, MapView, Map, WebMap, FeatureLayer, Legend) => {
+require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/renderers/visualVariables/SizeVariable"], (esriConfig, MapView, Map, WebMap, FeatureLayer, Legend, SizeVariable) => {
     esriConfig.apiKey = esri_key;
 
     // ----------- BUTTONS FOR SURVEYS -----------------
     // Add a Group
     const add_button = document.getElementById("add-group");
     add_button.addEventListener("click", () => {
-        console.log("Initiate Survey -> Add Group")
+        //console.log("Initiate Survey -> Add Group")
 
         //This is the Survey123 -- Add
         document.getElementById("formDiv").setAttribute("style", "height:100%");
@@ -69,6 +69,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     };
 
     //Layer Styling is here
+    /*
     const renderer_Rule = {
         type: "simple",
         label: "Groups",
@@ -83,38 +84,64 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
         },
 
         visualVariables: [{
-                type: "color",
-                field: "Stew_Gr",
-                stops: [
-                    { value: 0, color: colors[0] },
-                    { value: 1, color: "#354F52" },
-                ]
-            }
-            /*,
-                        {
-                            type: "color",
-                            valueExpression: "DateDiff( Now() , $feature['EditDate'], 'minutes')",
-                            valueExpressionTitle: "Days it took to close incident",
-                            stops: [
-                                { value: 100, color: colors[0], label: "15" },
-                                { value: 10, color: colors[1], label: "now" },
-                                { value: 0, color: colors[2], label: "new" },
-                            ]
-                        }
-                        
-                                    ,
-                                               {
-                                                   type: "size",
-                                                   valueExpression: "DateDiff( Now() , $feature['EditDate'], 'days')",
-                                                   valueExpressionTitle: "Days it took to close incident",
-                                                   stops: [
-                                                       { value: 23, size: 4, label: "23" },
-                                                       { value: 1, size: 4, label: "now" },
-                                                       { value: 0, size: circle_size, label: "new" },
-                                                   ]
-            }*/
-        ]
+            type: "color",
+            field: "Stew_Gr",
+            stops: [
+                { value: 0, color: colors[0] },
+                { value: -1, color: "#354F52" },
+            ]
+        }]
     }
+    */
+
+    const markercolor = '#32539A';
+    const renderer_Rule = {
+            type: "unique-value",
+            legendOptions: {
+                title: "Stewardship Groups"
+            },
+            field: "Stew_Gr",
+            uniqueValueInfos: [{
+                value: -1,
+                label: "Stew-Map Group",
+                symbol: {
+                    type: "simple-marker",
+                    size: 4,
+                    color: markercolor,
+                    outline: {
+                        width: 1,
+                        color: "#79C99E"
+                    }
+                }
+            }, {
+                value: 0,
+                label: "990 Group",
+                symbol: {
+                    type: "simple-marker",
+                    size: 4,
+                    color: markercolor,
+                    outline: {
+                        width: 0.4,
+                        color: "#E5E5E5"
+                    }
+                }
+            }]
+        }
+        // Adjust Scale in Zoom
+    renderer_Rule.visualVariables = [{
+        type: "size",
+        valueExpression: "$view.scale",
+        stops: [{
+            size: 5,
+            value: 50000
+        }, {
+            size: 3,
+            value: 250000
+        }, {
+            size: 1,
+            value: 1000000
+        }]
+    }];
 
     //Connect to Group Data as feature layer
     const layer = new FeatureLayer({
@@ -140,8 +167,13 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
 
     /*/ ------------ Legend -----------------
     let legend = new Legend({ view: view });
-    view.ui.add(legend, "bottom-right");
-    */
+    legend.label = "Stewardship Groups"
+    view.ui.add(
+        legend, {
+            position: "bottom-right",
+        }
+    );
+    /*/
 
     // -------- INTERACTIONS -----------------
     // When a group is clicked on the map, filter the side bar to that group
@@ -183,88 +215,88 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
 
         //Empty the div
         document.getElementById("group-list").innerHTML = "";
-        console.log(`There are ${results.features.length} groups in the list`);
+        //console.log(`There are ${results.features.length} groups in the list`);
         //Sort List
         results.features.sort((a, b) => a.attributes.OrgName > b.attributes.OrgName ? 1 : -1);
 
         //Ierate over each element to generate the list
         results.features.forEach(function(feat) {
-            // ----- Insert Name and Address
-            var htmlString = `<div class="group-text"><p style="font-size:10pt;" class="group-content" id="group-title">${titleCase(feat.attributes.OrgName)}</p><hr id="group-sep"><p style="font-size:8pt" class="group-content">${titleCase(feat.attributes.OrgStreet1)},${feat.attributes.OrgCity}/${feat.attributes.OrgState}</p></div>`;
-            let div = document.createElement('div');
-            div.setAttribute("id", `${feat.attributes.PopID}`);
-            div.setAttribute("class", "group-container");
-            div.innerHTML = htmlString;
-            document.getElementById("group-list").appendChild(div);
+                // ----- Insert Name and Address
+                var htmlString = `<div class="group-text"><p style="font-size:10pt;" class="group-content" id="group-title">${titleCase(feat.attributes.OrgName)}</p><hr id="group-sep"><p style="font-size:8pt" class="group-content">${titleCase(feat.attributes.OrgStreet1)},${feat.attributes.OrgCity}/${feat.attributes.OrgState}</p></div>`;
+                let div = document.createElement('div');
+                div.setAttribute("id", `${feat.attributes.PopID}`);
+                div.setAttribute("class", "group-container");
+                div.innerHTML = htmlString;
+                document.getElementById("group-list").appendChild(div);
 
-            //Go to clicked Group on Click
-            div.addEventListener('click', function change(event) {
-                // Clicked group gets a border
-                let grs = document.getElementsByClassName("group-container")
-                Array.from(grs).forEach(function(gr) {
-                    gr.setAttribute("class", "group-container");
-                })
+                //Go to clicked Group on Click
+                div.addEventListener('click', function change(event) {
+                    // Clicked group gets a border
+                    let grs = document.getElementsByClassName("group-container")
+                    Array.from(grs).forEach(function(gr) {
+                        gr.setAttribute("class", "group-container");
+                    })
 
-                div.setAttribute("class", "group-container clicked");
-                // Goto the group on the map
-                view.goTo({
-                    target: feat,
-                    zoom: 15,
-                    duration: 2500
-                });
-            });
-
-
-            // ----- Button in each group element
-            // - Rigth panel actions
-            let button = document.createElement('div');
-            button.setAttribute("id", `${feat.attributes.OrgName}`);
-            button.setAttribute("class", "edit-button");
-            button.innerHTML = `<p style="pointer-events:none;">Edit This Group</p>`;
-
-            // ----- On click
-            button.addEventListener("click", function change(event) {
-                console.log(event.target.attributes.id.value);
-                // Query group by to get GlobalID
-                layer.queryFeatures({
-                    where: `OrgName = '${event.target.attributes.id.value}'`,
-                    outFields: ['*']
-                }).then(function(results) {
-                    //console.log(results.features[0].attributes);
-                    //objectId={objectid}
-                    //let web_link = `https://survey123.arcgis.com/share/${itemId}?mode=edit&objectId=${results.features[0].attributes.OBJECTID}`
-                    //console.log(web_link);
-
-                    //--------------------------- Insert Webform to formDiv-edit in Edit Mode
-                    //Div must have height to insert form in to it. 
-                    // Missing Object ID
-                    document.getElementById("formDiv-edit").setAttribute("style", "height:100%");
-                    document.getElementById("formDiv").setAttribute("style", "height:1px");
-
-                    var webform_edit = new Survey123WebForm({
-                        clientId: clientId, // Oath only is allowed in local host 50905 for now.
-                        container: "formDiv-edit",
-                        itemId: itemId,
-                        width: 250,
-                        autoRefresh: 3,
-                        hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
-                        onFormSubmitted: (data) => {
-                            //When form is submitted, refresh the feature layer. 
-                            console.log("Submitted!")
-                            layer.refresh();
-                        }
-                    });
-                    webform_edit.setMode({
-                        mode: 'edit',
-                        globalId: `${results.features[0].attributes.GlobalID}`,
-                        objectId: `${results.features[0].attributes.OBJECTID}`
+                    div.setAttribute("class", "group-container clicked");
+                    // Goto the group on the map
+                    view.goTo({
+                        target: feat,
+                        zoom: 15,
+                        duration: 2500
                     });
                 });
-            });
-            // On Click Finishes Here
-            div.appendChild(button); // Add edit button to the end of div
-        })
-        console.log(results.features[0].attributes)
+
+
+                // ----- Button in each group element
+                // - Rigth panel actions
+                let button = document.createElement('div');
+                button.setAttribute("id", `${feat.attributes.OrgName}`);
+                button.setAttribute("class", "edit-button");
+                button.innerHTML = `<p style="pointer-events:none;">Edit This Group</p>`;
+
+                // ----- On click
+                button.addEventListener("click", function change(event) {
+                    //console.log(event.target.attributes.id.value);
+                    // Query group by to get GlobalID
+                    layer.queryFeatures({
+                        where: `OrgName = '${event.target.attributes.id.value}'`,
+                        outFields: ['*']
+                    }).then(function(results) {
+                        //console.log(results.features[0].attributes);
+                        //objectId={objectid}
+                        //let web_link = `https://survey123.arcgis.com/share/${itemId}?mode=edit&objectId=${results.features[0].attributes.OBJECTID}`
+                        //console.log(web_link);
+
+                        //--------------------------- Insert Webform to formDiv-edit in Edit Mode
+                        //Div must have height to insert form in to it. 
+                        // Missing Object ID
+                        document.getElementById("formDiv-edit").setAttribute("style", "height:100%");
+                        document.getElementById("formDiv").setAttribute("style", "height:1px");
+
+                        var webform_edit = new Survey123WebForm({
+                            clientId: clientId, // Oath only is allowed in local host 50905 for now.
+                            container: "formDiv-edit",
+                            itemId: itemId,
+                            width: 250,
+                            autoRefresh: 3,
+                            hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
+                            onFormSubmitted: (data) => {
+                                //When form is submitted, refresh the feature layer. 
+                                console.log("Submitted!")
+                                layer.refresh();
+                            }
+                        });
+                        webform_edit.setMode({
+                            mode: 'edit',
+                            globalId: `${results.features[0].attributes.GlobalID}`,
+                            objectId: `${results.features[0].attributes.OBJECTID}`
+                        });
+                    });
+                });
+                // On Click Finishes Here
+                div.appendChild(button); // Add edit button to the end of div
+            })
+            //console.log(results.features[0].attributes)
     }
 
     // Queries for all the features in the service to fill the right panel for the first time. 

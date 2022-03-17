@@ -6,11 +6,49 @@ body {
     margin: 0;
     width: 100%;
     height: 100%;
-    overflow-y: hidden;
+    max-height: 100vh;
     display: flex;
-    flex-direction: column;
+    flex-flow: column;
     font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
     font-style: normal !important;
+    overflow-y: hidden;
+}
+
+.two-column {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+.header {
+    flex: 0;
+    padding: 30px 45px 30px;
+    border-bottom: 1px solid black;
+}
+
+.info-panel {
+    padding: 10px 10px 10px 10px;
+    width: 300px;
+}
+
+.holder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.def {
+    width: 80%;
+    flex: 0;
+    padding: 15px 15px 20px;
+    border-bottom: 2px solid #0f4256;
+}
+
+#group-list {
+    overflow-y: auto;
+    flex: 1 1 0;
+    padding: 0px 10px 0px 0px;
+    min-height: 150px;
 }
 
 .group-container {
@@ -51,38 +89,14 @@ p {
     margin: 0;
 }
 
-.two-column {
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
-    height: 100%;
-    max-height: 100%;
-}
-
 .left-panel {
     padding-top: 20px;
-    height: 100%;
     width: 400px;
     overflow-y: hidden;
 }
 
 .right-panel {
-    height: 100%;
     flex-grow: 1;
-}
-
-.info-panel {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 10px 10px 10px;
-    height: 100%;
-    width: 300px;
-}
-
-#group-list {
-    overflow-y: auto;
-    padding: 0px 10px 0px 0px;
-    max-height: calc(100% - 270px);
 }
 
 #formDiv {
@@ -94,13 +108,6 @@ p {
     margin: 0;
     height: 100%;
     width: 100%;
-}
-
-.header {
-    padding: 30px 45px 30px;
-    display: flex;
-    flex-direction: row;
-    border-bottom: 1px solid black;
 }
 
 .intro-text {
@@ -151,12 +158,6 @@ p {
     margin-bottom: 5px;
 }
 
-.def {
-    width: 80%;
-    padding: 15px 15px 20px;
-    border-bottom: 2px solid #0f4256;
-}
-
 .visible {
     visibility: visible;
 }
@@ -173,10 +174,6 @@ img {
 
 .text-holder {
     margin-left: 20px;
-}
-
-.holder {
-    height: 100%;
 }
 
 iframe {
