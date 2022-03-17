@@ -239,11 +239,15 @@ h2 {
         height: 40%!important;
     }
     .left-panel {
+        padding-top: 5px!important;
         width: 100% !important;
         flex: 1;
     }
     .def {
         margin: auto !important;
+    }
+    #add-group {
+        margin: 5px auto!important;
     }
     .info-panel {
         height: auto !important;
