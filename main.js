@@ -88,7 +88,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                     type: "simple-marker",
                     size: 4,
                     color: markercolor,
-                    outline: {
+                    outline: { //Stroke Settings
                         width: 1,
                         color: "#79C99E"
                     }
@@ -100,7 +100,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                     type: "simple-marker",
                     size: 4,
                     color: markercolor,
-                    outline: {
+                    outline: { //Stroke Settings
                         width: 0.4,
                         color: "#E5E5E5"
                     }
@@ -108,20 +108,37 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
             }]
         }
         // Adjust Scale in Zoom
-    renderer_Rule.visualVariables = [{
-        type: "size",
-        valueExpression: "$view.scale",
-        stops: [{
-            size: 5,
-            value: 50000
-        }, {
-            size: 3,
-            value: 250000
-        }, {
-            size: 1,
-            value: 1000000
-        }]
-    }];
+    renderer_Rule.visualVariables = [{ // Scale at zoom
+            type: "size",
+            valueExpression: "$view.scale",
+            stops: [{
+                size: 7,
+                value: 50000
+            }, {
+                size: 3,
+                value: 250000
+            }, {
+                size: 1,
+                value: 1000000
+            }]
+        }
+        /*,
+                { //change colors for recently editted
+                    type: "size",
+                    valueExpression: "$view.scale",
+                    stops: [{
+                        size: 5,
+                        value: 50000
+                    }, {
+                        size: 3,
+                        value: 250000
+                    }, {
+                        size: 1,
+                        value: 1000000
+                    }]
+
+                }*/
+    ];
 
     //Connect to Group Data as feature layer
     const layer = new FeatureLayer({
@@ -185,6 +202,8 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
 
     //Everything about the group-list is here
     function injectList(results) {
+
+        console.log(results.features[0].attributes);
 
         /* Inject List Controls the right panel element
         0. Empty the Group List
