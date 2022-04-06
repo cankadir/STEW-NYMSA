@@ -84,7 +84,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     };
 
     // Render Styline
-    const markercolor = '#32539A';
+    const markercolor = '#4664a4';
     const renderer_Rule = {
             type: "unique-value",
             legendOptions: {
@@ -111,7 +111,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                     size: 4,
                     color: markercolor,
                     outline: { //Stroke Settings
-                        width: 0.4,
+                        width: 1,
                         color: "#E5E5E5"
                     }
                 }
@@ -303,7 +303,6 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
 
                     var obj = results.features[0];
                     console.log(obj.geometry.x, obj.geometry.y)
-
 
                     var webform_edit = new Survey123WebForm({
                         clientId: clientId,
