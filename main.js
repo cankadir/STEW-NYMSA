@@ -8,12 +8,14 @@ import { config } from "./config.js";
 var esri_key = config.esri_key;
 var clientId = config.clientId;
 var itemId = config.itemId;
-var fl = config.fl_url;
+var fl_Y = config.fl_url_Y;
+var fl_N = config.fl_url_N;
+
 
 const colors = ["#A8A8A9", "#A8A8A9", "#AD3C0E"]; // Marker Colors, time based rendering
 const circle_size = 6; // Markersize
 
-require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/renderers/visualVariables/SizeVariable"], (esriConfig, MapView, Map, WebMap, FeatureLayer, Legend, SizeVariable) => {
+require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/renderers/visualVariables/SizeVariable", "esri/geometry/Extent"], (esriConfig, MapView, Map, WebMap, FeatureLayer, Legend, SizeVariable, Extent) => {
     esriConfig.apiKey = esri_key;
 
     // ----------- BUTTONS FOR SURVEYS -----------------
@@ -24,7 +26,6 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
         //This is the Survey123 -- Add
         document.getElementById("formDiv").setAttribute("style", "height:100%");
         document.getElementById("formDiv-edit").setAttribute("style", "height:1px");
-
         document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
 
         var webform = new Survey123WebForm({
@@ -56,11 +57,20 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
             onFormSubmitted: (data) => { // Show me the submitted data
                 console.log("New Group Submitted")
                 console.log(data);
-                layer.refresh();
 
                 let tt = document.getElementsByClassName('left-panel');
                 tt = [...tt][0];
                 tt.setAttribute("style", "min-height:0px");
+                console.log("all done ")
+
+                setTimeout(function() {
+                    layer.refresh();
+                    no_layer.refresh();
+                    myMap.removeAll()
+                    myMap.addMany([layer, no_layer])
+
+                }, 500);
+
             }
         })
     });
@@ -109,49 +119,73 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
         }
         // Adjust Scale in Zoom
     renderer_Rule.visualVariables = [{ // Scale at zoom
-            type: "size",
-            valueExpression: "$view.scale",
-            stops: [{
-                size: 7,
-                value: 50000
-            }, {
-                size: 3,
-                value: 250000
-            }, {
-                size: 1,
-                value: 1000000
-            }]
-        }
-        /*,
-                { //change colors for recently editted
-                    type: "size",
-                    valueExpression: "$view.scale",
-                    stops: [{
-                        size: 5,
-                        value: 50000
-                    }, {
-                        size: 3,
-                        value: 250000
-                    }, {
-                        size: 1,
-                        value: 1000000
-                    }]
-
-                }*/
-    ];
+        type: "size",
+        valueExpression: "$view.scale",
+        stops: [{
+            size: 7,
+            value: 50000
+        }, {
+            size: 3,
+            value: 250000
+        }, {
+            size: 1,
+            value: 1000000
+        }]
+    }];
 
     //Connect to Group Data as feature layer
     const layer = new FeatureLayer({
-        url: fl,
+        url: fl_Y,
         outFields: ["*"],
         renderer: renderer_Rule,
         popupTemplate: template_groups,
     });
 
+    const no_renderer_Rule = {
+        type: "simple",
+        symbol: {
+            type: "simple-marker",
+            size: 4,
+            color: "red",
+            outline: { //Stroke Settings
+                width: 0.4,
+                color: "#E5E5E5"
+            }
+        }
+    }
+
+    // Adjust Scale in Zoom
+    no_renderer_Rule.visualVariables = [{ // Scale at zoom
+        type: "size",
+        valueExpression: "$view.scale",
+        stops: [{
+            size: 7,
+            value: 50000
+        }, {
+            size: 3,
+            value: 250000
+        }, {
+            size: 1,
+            value: 1000000
+        }]
+    }];
+
+    var no_template_groups = {
+        title: "Suggested Group",
+        content: "<p style='font-weight:bold;margin-bottom:10px!important'>{OrgName}</p>"
+    };
+
+    const no_layer = new FeatureLayer({
+        url: fl_N,
+        outFields: ["OrgName"],
+        renderer: no_renderer_Rule,
+        popupTemplate: no_template_groups,
+    });
+
     // ----- BASEMAP ------
     const myMap = new Map({
         basemap: "osm-light-gray",
-        layers: [layer] // Non-profits and stew-map layer
+        layers: [no_layer, layer]
     });
 
     // Create a MapView instance (for 2D viewing) and reference the map instance
@@ -259,17 +293,17 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                 // Query group by to get GlobalID
                 layer.queryFeatures({
                     where: `OrgName = '${event.target.attributes.id.value}'`,
-                    outFields: ['*']
+                    outFields: ['*'],
+                    returnGeometry: true
                 }).then(function(results) {
-                    //let web_link = `https://survey123.arcgis.com/share/${itemId}?mode=edit&objectId=${results.features[0].attributes.OBJECTID}`
-                    //console.log(web_link);
 
-                    //--------------------------- Insert Webform to formDiv-edit in Edit Mode
-                    //Div must have height to insert form in to it. 
-                    // Missing Object ID
                     document.getElementById("formDiv-edit").setAttribute("style", "height:100%");
                     document.getElementById("formDiv").setAttribute("style", "height:1px");
                     document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
+
+                    var obj = results.features[0];
+                    console.log(obj.geometry.x, obj.geometry.y)
+
 
                     var webform_edit = new Survey123WebForm({
                         clientId: clientId,
@@ -277,21 +311,37 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                         itemId: itemId,
                         width: 250,
                         //autoRefresh: 3,
-                        hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
+                        hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements,
+                        defaultQuestionValue: {
+                            "OrgName": obj.attributes.OrgName,
+                            "OrgStreet1": obj.attributes.OrgStreet1,
+                            "OrgCity": obj.attributes.OrgCity,
+                            "OrgState": obj.attributes.OrgState,
+                            "OrgZip": obj.attributes.OrgZip,
+                            "PrimFocus": obj.attributes.PrimFocus,
+                            "Accept": "N"
+                        },
+                        onFormLoaded: (data) => { // Place point to current location
+                            webform_edit.setGeopoint({
+                                x: obj.geometry.x,
+                                y: obj.geometry.y
+                            });
+                        },
                         onFormSubmitted: (data) => {
                             console.log('Form submitted: ', data);
-                            layer.refresh();
+
+                            setTimeout(function() {
+                                layer.refresh();
+                                no_layer.refresh();
+                                myMap.removeAll()
+                                myMap.addMany([layer, no_layer])
+                            }, 500);
+
                             let tt = document.getElementsByClassName('left-panel');
                             tt = [...tt][0];
                             tt.setAttribute("style", "min-height:0px");
                         }
                     });
-
-                    webform_edit.setMode({
-                        mode: 'edit',
-                        globalId: `${results.features[0].attributes.GlobalID}`,
-                        objectId: `${results.features[0].attributes.OBJECTID}`
-                    })
                 });
             });
             // On Click Finishes Here
