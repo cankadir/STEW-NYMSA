@@ -21,20 +21,33 @@
     <div class="header">
 
         <div class="close"></div>
-        <div class="text-holder">
-            <h2>STEW-MAP Live - New York City</h2>
 
-            <p class="intro-text mini">
-                The Stewardship Mapping and Assessment (STEW-MAP) project visualizes groups that help take care of the environment, or stewards, on a digital map.
-            </p>
-            <p class="intro-text page">
-                The Stewardship Mapping and Assessment (STEW-MAP) project visualizes groups that help take care of the environment, or stewards, on a digital map. Our last survey in NYC closed in 2018, resulting in a <a href="https://usfs.maps.arcgis.com/apps/webappviewer/index.html?id=4d8be0bc04b649b383aa66b7bce682c0"
-                    target="_blank">mapped database</a>. Help us keep groups' contact information current - and include new groups or groups that haven't yet taken the survey. Below, you can <b>find and edit already mapped groups</b>, by looking at the list
-                on the right - or <b>add a new group</b> by clicking "Click here to add a group to the map".
-                <u>Your participation in STEW-MAP is completely voluntary</u>. At a later stage, groups added to this map may be contacted for the full STEW-MAP survey, as part of an update.
-            </p>
+        <div class="head-content">
+            <div class="logo-holder">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_the_United_States_Forest_Service.svg/1082px-Logo_of_the_United_States_Forest_Service.svg.png" alt="US Forest Service shield logo">
+            </div>
+            <div class="text-holder">
+                <h2>STEW-MAP : New York City</h2>
+                <h3>Add Your Group to the STEW-MAP LIVE Map!</h3>
+            </div>
+        </div>
+
+        <p class="intro-text page">
+            The Stewardship Mapping and Assessment (STEW-MAP) project visualizes groups that help take care of the environment, or stewards, on a digital map. Our NYC STEW-MAP project closed in 2017, resulting in a <a target="_blank" href="https://usfs.maps.arcgis.com/apps/webappviewer/index.html?id=4d8be0bc04b649b383aa66b7bce682c0">mapped database</a>.
+            Help us keep groups' contact information current - and include new groups or groups that haven't yet taken the survey. Below, you can <strong>find and edit already mapped groups (circled in green) and registered non-profits with the IRS</strong>,
+            by looking at the list on the right - <strong>add a new group</strong> by clicking "Click here to add a group to the map". <u>Your participation in STEW-MAP is completely voluntary</u>. At a later stage, groups added to this map may be contacted
+            for the full STEW-MAP survey, as part of an update.
+            <br><br> By participating in STEW-MAP, you can help potential volunteers, public agencies, funders, and other stewards find your group and learn about what it does. You will also be able to learn about other groups doing stewardship work in
+            your region.
+        </p>
+        <p class="intro-text mobile">
+            This form is to collect basic information on groups' basic contact information, including where each group office or meeting space is located. You can enter your own group's information or other groups that you know of or collaborate with. <u>Your participation in STEW-MAP is completely voluntary</u>.
+        </p>
+        <div id="button" class="page">
+            <p class="hover-up">Click Here to Read the Paperwork Reduction Act Statement</p>
         </div>
     </div>
+
     <div class="two-column">
 
         <div class="left-panel">
@@ -46,8 +59,24 @@
             <div id="formDiv-edit" style="height:100px;"></div>
         </div>
 
-
         <div class="right-panel">
+            <div class="legend">
+                <p class="legend-title" style="font-size:0.9em;color:#333">Legend</p>
+                <div class="legend-items">
+                    <div class="item sym">
+                        <div class="circle" style="background-color:#7E96C8"></div>
+                    </div>
+                    <div class="item">Non Profit Organization</div>
+                    <div class="item sym">
+                        <div class="circle" style="background-color:#7E96C8;border:#46AF77 solid 2px"></div>
+                    </div>
+                    <div class="item">In Stew-MAP dataset</div>
+                    <div class="item sym">
+                        <div class="circle" style="background-color:#F24236"></div>
+                    </div>
+                    <div class="item">Editted Group</div>
+                </div>
+            </div>
             <div id="viewDiv"></div>
         </div>
 
@@ -58,44 +87,33 @@
                     <input type="text" id='group-search' style="width:200px">
                 </div>
 
-                <div id="group-list">
-                    <!--
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    <div class="t" style="background: blue; margin:25px; padding: 15px;">
-                        <p class="tt">Momo</p>
-                    </div>
-                    -->
-                </div>
+                <div id="group-list"></div>
 
             </div>
         </div>
 
+    </div>
+
+    <!-- Paperwork pop-up -->
+    <div class="paperwork hidden" id="act">
+
+        <div class="close" id="closer">&#10006;</div>
+        <div id="omb-cont" style="margin-top: 15px;">
+            <p class="hover-up" id="main">
+                According to the Paperwork Reduction Act of 1995, an agency may not conduct or sponsor, and a person is not required to respond to a collection of information unless it displays a valid OMB control number. The valid OMB control number for this information
+                collection is 0596-0240. This information will be used to create an assessment of environmental stewardship activities in this community. The time required to complete this information collection is estimated to average 2 minutes for individual
+                responses and 15 minutes for multiple responses, including the time for locating and sharing pertinent contact information with us.</p>
+
+            <p class="hover-up" id="addition">
+                The U.S. Department of Agriculture (USDA) prohibits discrimination in all its programs and activities on the basis of race, color, national origin, gender, religion, age, disability, political beliefs, sexual orientation, and marital or family status.
+                (Not all prohibited bases apply to all programs.) Persons with disabilities who require alternative means for communication of program information (Braille, large print, audiotape, etc.) should contact USDA's TARGET Center at 202-720-2600
+                (voice and TDD).
+            </p>
+
+            <p class="hover-up" id="note">
+                To file a complaint of discrimination, write USDA, Director, Office of Civil Rights, 1400 Independence Avenue, SW, Washington, DC 20250-9410 or call (800) 795-3272 (voice) or (202) 720-6382 (TDD). USDA is an equal opportunity provider and employer.
+            </p>
+        </div>
     </div>
 </body>
 

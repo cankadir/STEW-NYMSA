@@ -3,6 +3,36 @@
 
 import { config } from "./config.js";
 
+//----------------------------- PopUp Open close Here
+// I can do this before esri stuff since it has no interaction with the data
+document.getElementById("button").onclick = displayPop;
+document.getElementById("closer").onclick = ClosePop;
+
+function ClosePop(e) {
+    let el = document.getElementById("act");
+    el.classList.remove('visible');
+    el.classList.add('hidden');
+}
+
+function displayPop(e) {
+    let el = document.getElementById("act");
+
+    if (el.classList[1] === 'hidden') {
+
+        let button = document.getElementById("button");
+        let h = e.target.offsetTop;
+
+        el.style.top = (h + 15) + "px";
+        el.classList.remove('hidden');
+        el.classList.add('visible');
+
+    } else if (el.classList[1] === 'visible') {
+        el.classList.remove('visible');
+        el.classList.add('hidden');
+    }
+}
+
+//----------------------------- ARCGIS Stuff is here
 // Enter you local host url to Developper Auto 2.0 in ArcGIS Developper account.
 // All Survey Info comes from Config
 var esri_key = config.esri_key;
@@ -11,7 +41,6 @@ var itemId = config.itemId;
 var fl_Y = config.fl_url_Y;
 var fl_N = config.fl_url_N;
 
-
 const colors = ["#A8A8A9", "#A8A8A9", "#AD3C0E"]; // Marker Colors, time based rendering
 const circle_size = 6; // Markersize
 
@@ -19,7 +48,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     esriConfig.apiKey = esri_key;
 
     // ----------- BUTTONS FOR SURVEYS -----------------
-    // Add a Group
+    // ---- Add a Group
     const add_button = document.getElementById("add-group");
     add_button.addEventListener("click", () => {
 
@@ -84,7 +113,10 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     };
 
     // Render Styline
-    const markercolor = '#4664a4';
+    const markercolor = '#7E96C8';
+    const stewcolor = "#46AF77";
+    const editcolor = "#F24236";
+
     const renderer_Rule = {
             type: "unique-value",
             legendOptions: {
@@ -99,8 +131,8 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                     size: 4,
                     color: markercolor,
                     outline: { //Stroke Settings
-                        width: 1,
-                        color: "#79C99E"
+                        width: 1.25,
+                        color: stewcolor,
                     }
                 }
             }, {
@@ -146,7 +178,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
         symbol: {
             type: "simple-marker",
             size: 4,
-            color: "red",
+            color: editcolor,
             outline: { //Stroke Settings
                 width: 0.4,
                 color: "#E5E5E5"
@@ -171,8 +203,8 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     }];
 
     var no_template_groups = {
-        title: "Suggested Group",
-        content: "<p style='font-weight:bold;margin-bottom:10px!important'>{OrgName}</p>"
+        title: "",
+        content: "<p style='font-weight:normal;margin-bottom:10px!important'>Suggested Group</p>"
     };
 
     const no_layer = new FeatureLayer({
@@ -196,15 +228,9 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
         center: [-73.957, 40.733]
     });
 
-    /*/ ------------ Legend -----------------
-    let legend = new Legend({ view: view });
-    legend.label = "Stewardship Groups"
-    view.ui.add(
-        legend, {
-            position: "bottom-right",
-        }
-    );
-    /*/
+    view.popup.actions = [];
+
+    // ------------ Legend -----------------
 
     // -------- INTERACTIONS -----------------
     // When a group is clicked on the map, filter the side bar to that group
