@@ -51,9 +51,7 @@
     <div class="two-column">
 
         <div class="left-panel">
-            <div class="button" id="add-group">
-                <span class="content">Click here to add a group to the map</span>
-            </div>
+
 
             <div id="formDiv" style="height:100px;"></div>
             <div id="formDiv-edit" style="height:100px;"></div>
@@ -77,16 +75,24 @@
                     <div class="item">Editted Group</div>
                 </div>
             </div>
+
             <div id="viewDiv"></div>
         </div>
 
         <div class="info-panel">
+            <!-- Add new Group Button-->
             <div class="holder">
-                <div class="def">
-                    <p class="note">Search for a Group</p>
-                    <input type="text" id='group-search' style="width:200px">
+                <div class="button" id="add-group">
+                    <span class="content">Click here to add a group to the map</span>
                 </div>
 
+                <!-- Search Group Text Input-->
+                <div class="def">
+                    <p class="note">Search for a Group</p>
+                    <input type="text" id='group-search'>
+                </div>
+
+                <!-- Long Group List -->
                 <div id="group-list"></div>
 
             </div>

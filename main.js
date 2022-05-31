@@ -90,6 +90,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                 let tt = document.getElementsByClassName('left-panel');
                 tt = [...tt][0];
                 tt.setAttribute("style", "min-height:0px");
+                //tt.setAttribute("style", "width:0px");
                 console.log("all done ")
 
                 setTimeout(function() {
@@ -97,8 +98,14 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                     no_layer.refresh();
                     myMap.removeAll()
                     myMap.addMany([layer, no_layer])
+                    console.log("Width Set to 0px")
 
                 }, 500);
+
+                setTimeout(function() {
+                    tt.setAttribute("style", "width:0px");
+                    console.log("Width Set to 0px")
+                }, 700);
 
             }
         })
@@ -365,6 +372,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                             let tt = document.getElementsByClassName('left-panel');
                             tt = [...tt][0];
                             tt.setAttribute("style", "min-height:0px");
+                            tt.setAttribute("style", "width:0px");
                         }
                     });
                 });
