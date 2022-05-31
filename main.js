@@ -119,7 +119,8 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
         content: "<p style='font-weight:bold;margin-bottom:10px!important'>{OrgName}</p> <p>{OrgStreet1}, {OrgCity}/ {OrgState}, {OrgZip}</p> <p> <b>Org. Focus:</b> {PrimFocus}</p>"
     };
 
-    // Render Styline
+    // ------------------- Render Styline
+    // adjust point symbology here
     const markercolor = '#7E96C8';
     const stewcolor = "#46AF77";
     const editcolor = "#F24236";
