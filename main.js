@@ -40,6 +40,8 @@ var clientId = config.clientId;
 var itemId = config.itemId;
 var fl_Y = config.fl_url_Y;
 var fl_N = config.fl_url_N;
+var survey = config.survey;
+console.log(survey);
 
 const colors = ["#A8A8A9", "#A8A8A9", "#AD3C0E"]; // Marker Colors, time based rendering
 const circle_size = 6; // Markersize
@@ -61,8 +63,6 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
             clientId: clientId, // Oath only is allowed in local host 50905 for now.
             container: "formDiv",
             itemId: itemId,
-            //autoRefresh: 3,
-            //isDisabedSubmittoFeatureService: false,
             hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
             onFormLoaded: (data) => { // Place point to current location
                 if (navigator.geolocation) {
@@ -121,9 +121,9 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
 
     // ------------------- Render Styline
     // adjust point symbology here
-    const markercolor = '#7E96C8';
-    const stewcolor = "#46AF77";
-    const editcolor = "#F24236";
+    const markercolor = '#46AF77';
+    const stewcolor = "#F7D002";
+    const editcolor = "#F56476";
 
     const renderer_Rule = {
             type: "unique-value",
@@ -176,6 +176,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     //Connect to Group Data as feature layer
     const layer = new FeatureLayer({
         url: fl_Y,
+        definitionExpression: `survey = '${survey}'`, // Filter data by survey
         outFields: ["*"],
         renderer: renderer_Rule,
         popupTemplate: template_groups,
@@ -217,6 +218,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
 
     const no_layer = new FeatureLayer({
         url: fl_N,
+        definitionExpression: `survey = '${survey}'`, // Filter data by survey
         outFields: ["OrgName"],
         renderer: no_renderer_Rule,
         popupTemplate: no_template_groups,
@@ -238,8 +240,6 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
 
     view.popup.actions = [];
 
-    // ------------ Legend -----------------
-
     // -------- INTERACTIONS -----------------
     // When a group is clicked on the map, filter the side bar to that group
     view.on("click", (event) => {
@@ -248,7 +248,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                 var graphic = response.results[0].graphic;
                 // Filter the info element to clicked group
                 layer.queryFeatures({
-                    where: `PopID = '${graphic.attributes.PopID}'`,
+                    where: `PopID = '${graphic.attributes.PopID}' AND survey = '${survey}'`,
                     outFields: ["*"]
                 }).then(function(results) {
                     console.log(results.features);
@@ -261,16 +261,20 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     // -------------------- INPUT ------------------------
     //Convert text to title case
     function titleCase(str) {
-        str = str.toLowerCase().split(' ');
-        for (var i = 0; i < str.length; i++) {
-            str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+        if (str) {
+            str = str.toLowerCase().split(' ');
+            for (var i = 0; i < str.length; i++) {
+                str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+            }
+            return str.join(' ');
+        } else {
+            return str
         }
-        return str.join(' ');
+
     }
 
     //Everything about the group-list is here
     function injectList(results) {
-
         console.log(results.features[0].attributes);
 
         /* Inject List Controls the right panel element
@@ -326,7 +330,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                 //console.log(event.target.attributes.id.value);
                 // Query group by to get GlobalID
                 layer.queryFeatures({
-                    where: `OrgName = '${event.target.attributes.id.value}'`,
+                    where: `OrgName = '${event.target.attributes.id.value}' AND survey = '${survey}'`,
                     outFields: ['*'],
                     returnGeometry: true
                 }).then(function(results) {
@@ -384,7 +388,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     }
 
     // Queries for all the features in the service to fill the right panel for the first time. 
-    layer.queryFeatures().then(function(results) {
+    layer.queryFeatures({ where: `survey = '${survey}'` }).then(function(results) {
         injectList(results)
     });
 
@@ -393,13 +397,13 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
         if (event.target.value) { //If the input exists
             // Search FL for similar enteries
             layer.queryFeatures({
-                where: `OrgName LIKE '%${event.target.value.toUpperCase()}%'`,
+                where: `OrgName LIKE '%${event.target.value.toUpperCase()}%' AND survey = '${survey}'`,
                 outFields: ['*']
             }).then(function(results) {
                 injectList(results);
             });
         } else { //If the input is empty, then run with all the values. 
-            layer.queryFeatures().then(function(results) {
+            layer.queryFeatures({ where: `survey = '${survey}'` }).then(function(results) {
                 injectList(results)
             });
         }
