@@ -64,6 +64,10 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
             container: "formDiv",
             itemId: itemId,
             hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
+            defaultQuestionValue: {
+                "Accept": "N",
+                "survey": survey
+            },
             onFormLoaded: (data) => { // Place point to current location
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(position => {
@@ -356,7 +360,8 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                             "OrgState": obj.attributes.OrgState,
                             "OrgZip": obj.attributes.OrgZip,
                             "PrimFocus": obj.attributes.PrimFocus,
-                            "Accept": "N"
+                            "Accept": "N",
+                            "survey": survey
                         },
                         onFormLoaded: (data) => { // Place point to current location
                             webform_edit.setGeopoint({
