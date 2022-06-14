@@ -41,12 +41,11 @@ var itemId = config.itemId;
 var fl_Y = config.fl_url_Y;
 var fl_N = config.fl_url_N;
 var survey = config.survey;
-console.log(survey);
+console.log("Survey in Action: ", survey);
 
-const colors = ["#A8A8A9", "#A8A8A9", "#AD3C0E"]; // Marker Colors, time based rendering
 const circle_size = 6; // Markersize
 
-require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/FeatureLayer", "esri/widgets/Legend", "esri/renderers/visualVariables/SizeVariable", "esri/geometry/Extent"], (esriConfig, MapView, Map, WebMap, FeatureLayer, Legend, SizeVariable, Extent) => {
+require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLayer"], (esriConfig, MapView, Map, FeatureLayer) => {
     esriConfig.apiKey = esri_key;
 
     // ----------- BUTTONS FOR SURVEYS -----------------
@@ -59,8 +58,9 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
         document.getElementById("formDiv-edit").setAttribute("style", "height:1px");
         document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
 
+        console.log(clientId, itemId);
         var webform = new Survey123WebForm({
-            clientId: clientId, // Oath only is allowed in local host 50905 for now.
+            clientId: clientId,
             container: "formDiv",
             itemId: itemId,
             hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
@@ -249,16 +249,18 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     view.on("click", (event) => {
         view.hitTest(event.screenPoint, { include: layer }) // Is it clicked?
             .then(function(response) {
-                var graphic = response.results[0].graphic;
-                // Filter the info element to clicked group
-                layer.queryFeatures({
-                    where: `PopID = '${graphic.attributes.PopID}' AND survey = '${survey}'`,
-                    outFields: ["*"]
-                }).then(function(results) {
-                    console.log(results.features);
-                    injectList(results); // Only 1 group
-                    document.getElementById("group-search").value = results.features[0].attributes.OrgName //Change input value to this so you can delete later.
-                });
+                if (response.results[0]) { //If click hit a point then continue on
+                    var graphic = response.results[0].graphic;
+                    // Filter the info element to clicked group
+                    layer.queryFeatures({
+                        where: `PopID = '${graphic.attributes.PopID}' AND survey = '${survey}'`,
+                        outFields: ["*"]
+                    }).then(function(results) {
+                        console.log(results.features);
+                        injectList(results); // Only 1 group
+                        document.getElementById("group-search").value = results.features[0].attributes.OrgName //Change input value to this so you can delete later.
+                    });
+                }
             });
     })
 
@@ -279,7 +281,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
 
     //Everything about the group-list is here
     function injectList(results) {
-        console.log(results.features[0].attributes);
+        //console.log(results.features[0].attributes);
 
         /* Inject List Controls the right panel element
         0. Empty the Group List
@@ -393,7 +395,10 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
     }
 
     // Queries for all the features in the service to fill the right panel for the first time. 
-    layer.queryFeatures({ where: `survey = '${survey}'` }).then(function(results) {
+    layer.queryFeatures({
+        where: `survey = '${survey}'`,
+        outFields: ["*"]
+    }).then(function(results) {
         injectList(results)
     });
 
@@ -408,7 +413,10 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/WebMap", "esri/l
                 injectList(results);
             });
         } else { //If the input is empty, then run with all the values. 
-            layer.queryFeatures({ where: `survey = '${survey}'` }).then(function(results) {
+            layer.queryFeatures({
+                where: `survey = '${survey}'`,
+                outFields: ["*"]
+            }).then(function(results) {
                 injectList(results)
             });
         }
