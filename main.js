@@ -41,6 +41,8 @@ var itemId = config.itemId;
 var fl_Y = config.fl_url_Y;
 var fl_N = config.fl_url_N;
 var survey = config.survey;
+var loc = config.loc;
+
 console.log("Survey in Action: ", survey);
 
 const circle_size = 6; // Markersize
@@ -79,8 +81,8 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                         //console.error('Unable to retrieve your location');
                         webform.setGeopoint({
                             // If current location is not know, go to the center
-                            x: -73.957,
-                            y: 40.733
+                            x: loc[0],
+                            y: loc[1]
                         });
                     });
                 } else {
@@ -238,8 +240,8 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
     let view = new MapView({
         map: myMap,
         container: "viewDiv",
-        zoom: 8,
-        center: [-73.957, 40.733]
+        zoom: 9,
+        center: loc
     });
 
     view.popup.actions = [];
