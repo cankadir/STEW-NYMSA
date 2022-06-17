@@ -60,17 +60,24 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
         document.getElementById("formDiv-edit").setAttribute("style", "height:1px");
         document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
 
-        console.log(clientId, itemId);
         var webform = new Survey123WebForm({
             clientId: clientId,
             container: "formDiv",
             itemId: itemId,
             hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
+            autoRefresh: 6,
             defaultQuestionValue: {
                 "Accept": "N",
                 "survey": survey
             },
-            onFormLoaded: (data) => { // Place point to current location
+            onFormLoaded: (data) => {
+
+                let tt = document.getElementsByClassName('left-panel');
+                tt = [...tt][0];
+                tt.setAttribute("style", "min-height:100%");
+
+                // Place point to map center
+                console.log(loc);
                 webform.setGeopoint({
                     x: loc[0],
                     y: loc[1]
@@ -78,27 +85,20 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
             },
             onFormSubmitted: (data) => { // Show me the submitted data
                 console.log("New Group Submitted")
-                console.log(data);
 
                 let tt = document.getElementsByClassName('left-panel');
                 tt = [...tt][0];
-                tt.setAttribute("style", "min-height:0px");
-                //tt.setAttribute("style", "width:0px");
                 console.log("all done ")
 
-                setTimeout(function() {
+                function shrink() {
                     layer.refresh();
                     no_layer.refresh();
-                    myMap.removeAll()
-                    myMap.addMany([layer, no_layer])
-                    console.log("Width Set to 0px")
-
-                }, 500);
-
-                setTimeout(function() {
                     tt.setAttribute("style", "width:0px");
+                    tt.setAttribute("style", "min-height:0px");
                     console.log("Width Set to 0px")
-                }, 700);
+                }
+
+                setTimeout(shrink, 6000);
 
             }
         })
@@ -354,7 +354,13 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                             "Accept": "N",
                             "survey": survey
                         },
+
                         onFormLoaded: (data) => { // Place point to current location
+
+                            let tt = document.getElementsByClassName('left-panel');
+                            tt = [...tt][0];
+                            tt.setAttribute("style", "min-height:100%");
+
                             webform_edit.setGeopoint({
                                 x: obj.geometry.x,
                                 y: obj.geometry.y
@@ -363,17 +369,16 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                         onFormSubmitted: (data) => {
                             console.log('Form submitted: ', data);
 
+                            let tt = document.getElementsByClassName('left-panel');
+                            tt = [...tt][0];
+
                             setTimeout(function() {
                                 layer.refresh();
                                 no_layer.refresh();
-                                myMap.removeAll()
-                                myMap.addMany([layer, no_layer])
-                            }, 500);
-
-                            let tt = document.getElementsByClassName('left-panel');
-                            tt = [...tt][0];
-                            tt.setAttribute("style", "min-height:0px");
-                            tt.setAttribute("style", "width:0px");
+                                tt.setAttribute("style", "width:0px");
+                                tt.setAttribute("style", "min-height:0px");
+                                console.log("Width Set to 0px")
+                            }, 6000);
                         }
                     });
                 });
