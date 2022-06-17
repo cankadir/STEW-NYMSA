@@ -71,23 +71,10 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                 "survey": survey
             },
             onFormLoaded: (data) => { // Place point to current location
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(position => {
-                        webform.setGeopoint({
-                            x: position.coords.longitude,
-                            y: position.coords.latitude
-                        });
-                    }, () => {
-                        //console.error('Unable to retrieve your location');
-                        webform.setGeopoint({
-                            // If current location is not know, go to the center
-                            x: loc[0],
-                            y: loc[1]
-                        });
-                    });
-                } else {
-                    console.error('Geolocation is not supported by your browser');
-                }
+                webform.setGeopoint({
+                    x: loc[0],
+                    y: loc[1]
+                });
             },
             onFormSubmitted: (data) => { // Show me the submitted data
                 console.log("New Group Submitted")
