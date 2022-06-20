@@ -90,6 +90,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                 tt = [...tt][0];
                 console.log("all done ")
 
+                // Remove the side bar
                 function shrink() {
                     layer.refresh();
                     no_layer.refresh();
@@ -98,7 +99,48 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                     console.log("Width Set to 0px")
                 }
 
-                setTimeout(shrink, 6000);
+                // ------ LONG SURVEY
+                var answer = data.surveyFeatureSet.features[0].attributes
+
+                //Prepopulate Long Survey
+                var topop = ['OrgName', 'OrgStreet1', 'OrgCity', 'OrgState', 'OrgZip', 'PrimFocus']
+                var surveyLink = `https://survey123.arcgis.com/share/5a32410424d24ff2aca7046bbce6a700?`
+                topop.forEach(function(d) {
+                    if (answer[d]) {
+                        surveyLink = surveyLink + `field:${d}=${ answer[d] }&`;
+                    }
+                })
+                surveyLink = surveyLink.slice(0, -1);
+
+                // Go to custom survey on button click
+                console.log(surveyLink);
+                var surveyButton = document.getElementsByClassName('modal-button')
+                surveyButton = [...surveyButton][0]
+                surveyButton.onclick = function() {
+                    window.open(surveyLink, "_blank");
+                }
+
+                //Counter is something like this. 
+                let modal = document.getElementsByClassName('modal');
+                modal = [...modal][0];
+                modal.setAttribute("style", "visibility:visible")
+
+                let counter = 10;
+                setInterval(() => {
+
+                    let countP = document.getElementsByClassName('modal-counter');
+                    countP = [...countP][0];
+                    countP.innerHTML = counter.toString();
+
+                    counter--;
+
+                    //Hide modal after 6 seconds.
+                    if (counter === 0) {
+                        modal.setAttribute("style", "visibility:hidden")
+                        shrink();
+                    }
+                }, 1000);
+
 
             }
         })
