@@ -66,7 +66,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
             container: "formDiv",
             itemId: itemId,
             hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements
-            autoRefresh: 6,
+            autoRefresh: 2,
             defaultQuestionValue: {
                 "Accept": "N",
                 "survey": survey
@@ -92,11 +92,16 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
 
                 // Remove the side bar & refresh
                 function shrink() {
-                    tt.setAttribute("style", "width:0px !important");
                     layer.refresh();
                     no_layer.refresh();
                     console.log("----> Width Set to 0px")
                 }
+
+                function close() {
+                    tt.setAttribute("style", "width:0px !important");
+                    console.log("lattened")
+                }
+                setTimeout(close, 8000)
 
                 // ------ LONG SURVEY
                 var answer = data.surveyFeatureSet.features[0].attributes
@@ -278,7 +283,6 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                         where: `PopID = '${graphic.attributes.PopID}' AND survey = '${survey}'`,
                         outFields: ["*"]
                     }).then(function(results) {
-                        console.log(results.features);
                         injectList(results); // Only 1 group
                         document.getElementById("group-search").value = results.features[0].attributes.OrgName //Change input value to this so you can delete later.
                     });
@@ -310,7 +314,10 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
         1. Sort List
         2. For Loop Elements and insert Group Name and Address
         3. Add "Edit This Group" button at the bottom
-        4. When Edit button is clicked, launch a new survey in edit mode at the side. */
+        4. When Edit button is clicked, launch a new survey at the side. 
+        5. When the form is submitted open a modal -> to take the long survey
+        6. Based on the answer, refresh everything etc etc*/
+
 
         //Empty the div
         document.getElementById("group-list").innerHTML = "";
@@ -374,7 +381,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                         container: "formDiv-edit",
                         itemId: itemId,
                         width: 250,
-                        autoRefresh: 6,
+                        autoRefresh: 2,
                         hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements,
                         defaultQuestionValue: {
                             "OrgName": obj.attributes.OrgName,
@@ -408,19 +415,24 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                             let tt = document.getElementsByClassName('left-panel');
                             tt = [...tt][0];
 
-                            function shrink() {
+                            function shrink() { // Refresh the layers
                                 tt.setAttribute("style", "width:0px !important");
                                 layer.refresh();
                                 no_layer.refresh();
                                 console.log("----> Width Set to 0px")
                             }
 
-                            setTimeout(shrink, 7000)
+                            function close() { // Close the side panel
+                                tt.setAttribute("style", "width:0px !important");
+                                console.log("lattened")
+                            }
+                            setTimeout(close, 8000);
 
                             // --------- LONG SURVEY ---------
                             var answer = data.surveyFeatureSet.features[0].attributes
 
-                            //Prepopulate Long Survey
+                            //----    Prepopulate Long Survey
+                            // This is done in REST API so a long link needs to be created.
                             var topop = ['OrgName', 'OrgStreet1', 'OrgCity', 'OrgState', 'OrgZip', 'PrimFocus', 'PopID']
                             var surveyLink = `https://survey123.arcgis.com/share/5a32410424d24ff2aca7046bbce6a700?`
                             topop.forEach(function(d) {
@@ -434,7 +446,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                                 }
 
                             })
-                            surveyLink = surveyLink.slice(0, -1);
+                            surveyLink = surveyLink.slice(0, -1); //This is the link with prepopulated answers
 
                             // ------------- Open up the modal
                             //Counter is something like this. 
@@ -442,6 +454,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                             modal = [...modal][0];
                             modal.setAttribute("style", "visibility:visible")
 
+                            //If yes to long survey
                             console.log(surveyLink);
                             var surveyButtonY = document.getElementById('yes')
                             surveyButtonY.onclick = function() {
@@ -451,6 +464,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
 
                             }
 
+                            //If no to long survey
                             var surveyButtonN = document.getElementById('no')
                             surveyButtonN.onclick = function() {
                                 shrink();
