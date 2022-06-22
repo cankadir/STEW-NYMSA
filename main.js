@@ -60,6 +60,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
         document.getElementById("formDiv-edit").setAttribute("style", "height:1px");
         document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
 
+        // Survey is here
         var webform = new Survey123WebForm({
             clientId: clientId,
             container: "formDiv",
@@ -88,15 +89,13 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
 
                 let tt = document.getElementsByClassName('left-panel');
                 tt = [...tt][0];
-                console.log("all done ")
 
-                // Remove the side bar
+                // Remove the side bar & refresh
                 function shrink() {
+                    tt.setAttribute("style", "width:0px !important");
                     layer.refresh();
                     no_layer.refresh();
-                    tt.setAttribute("style", "width:0px");
-                    tt.setAttribute("style", "min-height:0px");
-                    console.log("Width Set to 0px")
+                    console.log("----> Width Set to 0px")
                 }
 
                 // ------ LONG SURVEY
@@ -118,16 +117,19 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                 modal = [...modal][0];
                 modal.setAttribute("style", "visibility:visible")
 
-                console.log(surveyLink);
+                // If yes is clicked
                 var surveyButtonY = document.getElementById('yes')
                 surveyButtonY.onclick = function() {
                     window.open(surveyLink, "_blank");
-                    modal.setAttribute("style", "visibility:hidden")
+                    modal.setAttribute("style", "visibility:hidden");
+                    shrink();
                 }
 
+                //If no is clicked.
                 var surveyButtonN = document.getElementById('no')
                 surveyButtonN.onclick = function() {
-                    modal.setAttribute("style", "visibility:hidden")
+                    modal.setAttribute("style", "visibility:hidden");
+                    shrink();
                 }
 
             }
@@ -197,6 +199,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
     }];
 
     //Connect to Group Data as feature layer
+
     const layer = new FeatureLayer({
         url: fl_Y,
         definitionExpression: `survey = '${survey}'`, // Filter data by survey
@@ -242,10 +245,32 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
     const no_layer = new FeatureLayer({
         url: fl_N,
         definitionExpression: `survey = '${survey}'`, // Filter data by survey
-        outFields: ["OrgName"],
+        outFields: ["OrgName", 'PopID'],
         renderer: no_renderer_Rule,
         popupTemplate: no_template_groups,
     });
+
+    // Filter layer with no_layer. So things don't show up twice. 
+
+
+    var edits = []
+    var ees = no_layer.queryFeatures({
+        where: `PopID IS NOT NULL`, // If they have PopID's
+        outFields: ["*"]
+    }).then(function(results) {
+        var feats = results.features
+        feats.forEach(function(d) {
+            edits.push(d.attributes.PopID)
+        })
+        edits = [...new Set(edits)]
+        console.log([...edits]);
+        return edits;
+        // -- edits needs to be removed
+
+    });
+
+    console.log(ees)
+
 
     // ----- BASEMAP ------
     const myMap = new Map({
@@ -366,7 +391,6 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
 
                     var obj = results.features[0];
 
-
                     var webform_edit = new Survey123WebForm({
                         clientId: clientId,
                         container: "formDiv-edit",
@@ -406,13 +430,12 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                             let tt = document.getElementsByClassName('left-panel');
                             tt = [...tt][0];
 
-                            setTimeout(function() {
+                            function shrink() {
+                                tt.setAttribute("style", "width:0px !important");
                                 layer.refresh();
                                 no_layer.refresh();
-                                tt.setAttribute("style", "width:0px");
-                                tt.setAttribute("style", "min-height:0px");
-                                console.log("Width Set to 0px")
-                            }, 8000);
+                                console.log("----> Width Set to 0px")
+                            }
 
                             // --------- LONG SURVEY ---------
                             var answer = data.surveyFeatureSet.features[0].attributes
@@ -442,15 +465,17 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                             console.log(surveyLink);
                             var surveyButtonY = document.getElementById('yes')
                             surveyButtonY.onclick = function() {
+                                shrink();
                                 window.open(surveyLink, "_blank");
-                                modal.setAttribute("style", "visibility:hidden")
+                                modal.setAttribute("style", "visibility:hidden");
+
                             }
 
                             var surveyButtonN = document.getElementById('no')
                             surveyButtonN.onclick = function() {
+                                shrink();
                                 modal.setAttribute("style", "visibility:hidden")
                             }
-
                         }
                     });
                 });
