@@ -21,14 +21,17 @@
 
     <div class="modal">
         <div class="modal-screen">
-            <p class="modal-text">
-                If you are a member of the organiation you submitted information on, please fill out the long STEW-MAP survey.<br><br> If not this page page will close in 10 seconds...
-            </p>
-            <p class="modal-counter">10</p>
+            <p class="modal-text">If you are a member of the group you just submitted and want to take the full STEW-MAP survey, please click the button below.</p>
             <!--https://survey123.arcgis.com/share/5a32410424d24ff2aca7046bbce6a700-->
-            <button class="modal-button">
-                Fill out the STEW-MAP Survey
-            </button>
+            <div class="buttons">
+                <button class="modal-button" id="yes">
+                    Fill out the STEW-MAP Survey
+                </button>
+                <div class="gap"></div>
+                <button class="modal-button" id="no">
+                    Go back to the map
+                </button>
+            </div>
         </div>
     </div>
 
@@ -41,7 +44,7 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_the_United_States_Forest_Service.svg/1082px-Logo_of_the_United_States_Forest_Service.svg.png" alt="US Forest Service shield logo">
             </div>
             <div class="text-holder">
-                <h2>STEW-MAP : New York City</h2>
+                <h2>STEW-MAP : Bridger-Teton National Forest</h2>
                 <h3>Add Your Group to the STEW-MAP LIVE Map!</h3>
             </div>
         </div>

@@ -112,35 +112,23 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                 })
                 surveyLink = surveyLink.slice(0, -1);
 
-                // Go to custom survey on button click
-                console.log(surveyLink);
-                var surveyButton = document.getElementsByClassName('modal-button')
-                surveyButton = [...surveyButton][0]
-                surveyButton.onclick = function() {
-                    window.open(surveyLink, "_blank");
-                }
-
+                // ------------- Open up the modal
                 //Counter is something like this. 
                 let modal = document.getElementsByClassName('modal');
                 modal = [...modal][0];
                 modal.setAttribute("style", "visibility:visible")
 
-                let counter = 10;
-                setInterval(() => {
+                console.log(surveyLink);
+                var surveyButtonY = document.getElementById('yes')
+                surveyButtonY.onclick = function() {
+                    window.open(surveyLink, "_blank");
+                    modal.setAttribute("style", "visibility:hidden")
+                }
 
-                    let countP = document.getElementsByClassName('modal-counter');
-                    countP = [...countP][0];
-                    countP.innerHTML = counter.toString();
-
-                    counter--;
-
-                    //Hide modal after 6 seconds.
-                    if (counter === 0) {
-                        modal.setAttribute("style", "visibility:hidden")
-                        shrink();
-                    }
-                }, 1000);
-
+                var surveyButtonN = document.getElementById('no')
+                surveyButtonN.onclick = function() {
+                    modal.setAttribute("style", "visibility:hidden")
+                }
 
             }
         })
@@ -198,13 +186,13 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
         valueExpression: "$view.scale",
         stops: [{
             size: 7,
-            value: 50000
+            value: 1000000
         }, {
             size: 3,
-            value: 250000
+            value: 50000000
         }, {
             size: 1,
-            value: 1000000
+            value: 40000000
         }]
     }];
 
@@ -236,13 +224,13 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
         valueExpression: "$view.scale",
         stops: [{
             size: 7,
-            value: 50000
+            value: 1000000
         }, {
             size: 3,
-            value: 250000
+            value: 50000000
         }, {
             size: 1,
-            value: 1000000
+            value: 40000000
         }]
     }];
 
@@ -262,14 +250,14 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
     // ----- BASEMAP ------
     const myMap = new Map({
         basemap: "osm-light-gray",
-        layers: [no_layer, layer]
+        layers: [layer, no_layer]
     });
 
     // Create a MapView instance (for 2D viewing) and reference the map instance
     let view = new MapView({
         map: myMap,
         container: "viewDiv",
-        zoom: 9,
+        zoom: 5,
         center: loc
     });
 
@@ -377,14 +365,14 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                     document.getElementsByClassName('left-panel')[0].setAttribute("style", "min-height:400px");
 
                     var obj = results.features[0];
-                    console.log(obj.geometry.x, obj.geometry.y)
+
 
                     var webform_edit = new Survey123WebForm({
                         clientId: clientId,
                         container: "formDiv-edit",
                         itemId: itemId,
                         width: 250,
-                        //autoRefresh: 3,
+                        //autoRefresh: 6,
                         hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements,
                         defaultQuestionValue: {
                             "OrgName": obj.attributes.OrgName,
@@ -393,6 +381,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                             "OrgState": obj.attributes.OrgState,
                             "OrgZip": obj.attributes.OrgZip,
                             "PrimFocus": obj.attributes.PrimFocus,
+                            "PopID": obj.attributes.PopID,
                             "Accept": "N",
                             "survey": survey
                         },
@@ -402,6 +391,9 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                             let tt = document.getElementsByClassName('left-panel');
                             tt = [...tt][0];
                             tt.setAttribute("style", "min-height:100%");
+
+                            console.log(obj.attributes);
+                            console.log(obj.geometry.x, obj.geometry.y);
 
                             webform_edit.setGeopoint({
                                 x: obj.geometry.x,
@@ -420,7 +412,45 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                                 tt.setAttribute("style", "width:0px");
                                 tt.setAttribute("style", "min-height:0px");
                                 console.log("Width Set to 0px")
-                            }, 6000);
+                            }, 8000);
+
+                            // --------- LONG SURVEY ---------
+                            var answer = data.surveyFeatureSet.features[0].attributes
+
+                            //Prepopulate Long Survey
+                            var topop = ['OrgName', 'OrgStreet1', 'OrgCity', 'OrgState', 'OrgZip', 'PrimFocus', 'PopID']
+                            var surveyLink = `https://survey123.arcgis.com/share/5a32410424d24ff2aca7046bbce6a700?`
+                            topop.forEach(function(d) {
+                                // I want to get the PopID from the Object but all rest from the edit survey answer.
+                                if (d === "PopID") {
+                                    surveyLink = surveyLink + `field:${d}=${ obj.attributes[d] }&`;
+                                } else {
+                                    if (answer[d]) {
+                                        surveyLink = surveyLink + `field:${d}=${ answer[d] }&`;
+                                    }
+                                }
+
+                            })
+                            surveyLink = surveyLink.slice(0, -1);
+
+                            // ------------- Open up the modal
+                            //Counter is something like this. 
+                            let modal = document.getElementsByClassName('modal');
+                            modal = [...modal][0];
+                            modal.setAttribute("style", "visibility:visible")
+
+                            console.log(surveyLink);
+                            var surveyButtonY = document.getElementById('yes')
+                            surveyButtonY.onclick = function() {
+                                window.open(surveyLink, "_blank");
+                                modal.setAttribute("style", "visibility:hidden")
+                            }
+
+                            var surveyButtonN = document.getElementById('no')
+                            surveyButtonN.onclick = function() {
+                                modal.setAttribute("style", "visibility:hidden")
+                            }
+
                         }
                     });
                 });

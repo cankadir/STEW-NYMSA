@@ -39,6 +39,14 @@ body {
     z-index: 10000;
 }
 
+.modal .buttons {
+    height: 100%;
+    min-height: 60px;
+    box-sizing: content-box;
+    margin-top: 15px;
+    ;
+}
+
 .modal-screen {
     max-width: 450px;
     background-color: white;
@@ -53,12 +61,24 @@ body {
 
 .modal-button {
     margin: auto;
-    margin-top: 15px;
     display: flex;
     justify-content: center;
-    width: 100%;
-    padding: 5px;
-    background-color: #3a4d55;
+    padding: 10px;
+    background-color: #999;
+    width: 48%;
+    float: left;
+    min-height: 60px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.gap {
+    width: 4%;
+    height: 100%;
+    float: left;
+    min-height: 60px;
 }
 
 .modal-counter {
@@ -320,7 +340,7 @@ h2 {
     margin-top: 0px !important;
     margin-bottom: 5px;
     color: #0f4256;
-    text-shadow: 2px 2px #999;
+    text-shadow: 1px 1px #999;
 }
 
 .button {
