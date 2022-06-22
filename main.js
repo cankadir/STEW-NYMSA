@@ -250,28 +250,6 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
         popupTemplate: no_template_groups,
     });
 
-    // Filter layer with no_layer. So things don't show up twice. 
-
-
-    var edits = []
-    var ees = no_layer.queryFeatures({
-        where: `PopID IS NOT NULL`, // If they have PopID's
-        outFields: ["*"]
-    }).then(function(results) {
-        var feats = results.features
-        feats.forEach(function(d) {
-            edits.push(d.attributes.PopID)
-        })
-        edits = [...new Set(edits)]
-        console.log([...edits]);
-        return edits;
-        // -- edits needs to be removed
-
-    });
-
-    console.log(ees)
-
-
     // ----- BASEMAP ------
     const myMap = new Map({
         basemap: "osm-light-gray",
@@ -396,7 +374,7 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                         container: "formDiv-edit",
                         itemId: itemId,
                         width: 250,
-                        //autoRefresh: 6,
+                        autoRefresh: 6,
                         hideElements: ["theme", "navbar", "header", "description"], // Hide cosmetic elements,
                         defaultQuestionValue: {
                             "OrgName": obj.attributes.OrgName,
@@ -436,6 +414,8 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
                                 no_layer.refresh();
                                 console.log("----> Width Set to 0px")
                             }
+
+                            setTimeout(shrink, 7000)
 
                             // --------- LONG SURVEY ---------
                             var answer = data.surveyFeatureSet.features[0].attributes
