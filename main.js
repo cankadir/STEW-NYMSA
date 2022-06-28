@@ -318,7 +318,6 @@ require(["esri/config", "esri/views/MapView", "esri/Map", "esri/layers/FeatureLa
         5. When the form is submitted open a modal -> to take the long survey
         6. Based on the answer, refresh everything etc etc*/
 
-
         //Empty the div
         document.getElementById("group-list").innerHTML = "";
         //console.log(`There are ${results.features.length} groups in the list`);

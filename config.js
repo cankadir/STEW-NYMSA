@@ -4,6 +4,6 @@ export var config = {
     itemId: 'bb021561f4a1491c8fa06cd080319831', // Global 4 -> Goes to Live Data
     fl_url_Y: "https://services6.arcgis.com/IX0rbbPRMd0YfCJN/arcgis/rest/services/LiveData_Y/FeatureServer/0", //LIVE2 >Live Data -> Feature Layer View, Accept = Y
     fl_url_N: "https://services6.arcgis.com/IX0rbbPRMd0YfCJN/arcgis/rest/services/LiveData_N/FeatureServer/0", //LIVE2 >Live Data -> Feature Layer View, Accept = N
-    survey: "BTNF",
+    survey: "BTNF", // or NYC
     loc: [-110.7647, 43.47013] //[-73.957, 40.733]
 }
