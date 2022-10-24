@@ -1,3 +1,8 @@
+:root{
+    --bg : #267030;
+}
+
+
 html {
     height: 100%;
     overflow-x: hidden;
@@ -143,7 +148,8 @@ body {
 .header {
     flex: 0;
     padding: 20px 20px 20px;
-    border-bottom: 1px solid black;
+    border-bottom: 2px solid white;
+    background-color: var(--bg);
 }
 
 .info-panel {
@@ -220,6 +226,15 @@ p {
     margin: 0;
 }
 
+.header p{
+    color:white;
+}
+
+.intro-text a{
+    color: white;
+
+}
+
 .left-panel {
     padding-top: 20px;
     overflow-y: hidden;
@@ -248,6 +263,7 @@ p {
 
 .intro-text {
     font-size: 0.8rem;
+    margin-right: 3px;
 }
 
 .hover-up {
@@ -301,7 +317,7 @@ p {
 }
 
 img {
-    width: 70px;
+    width: 110px;
 }
 
 .logo-holder {
@@ -326,12 +342,6 @@ img {
     flex: 1;
 }
 
-.header {
-    flex: 0;
-    padding: 30px 45px 30px;
-    border-bottom: 1px solid black;
-}
-
 iframe {
     border: 0px none;
 }
@@ -339,8 +349,8 @@ iframe {
 h2 {
     margin-top: 0px !important;
     margin-bottom: 5px;
-    color: #0f4256;
-    text-shadow: 1px 1px #999;
+    color: white;
+    text-shadow: 1px 1px #555;
 }
 
 .button {
@@ -380,6 +390,11 @@ h2 {
 
 .mini {
     visibility: hidden;
+}
+h3 {
+    margin-top: 1px;
+    margin-bottom: 1px;
+    color: white;
 }
 
 @media only screen and (max-width: 960px) {
@@ -447,9 +462,11 @@ h2 {
         align-items: left;
         text-shadow: 1px 1px #999;
     }
+
     h3 {
         font-size: 12px;
-        margin: 5px 0px;
+        margin-top: 1px !important;
+        margin-bottom: 1px !important;
     }
     .page {
         visibility: hidden;
